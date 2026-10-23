@@ -1,0 +1,49 @@
+.\" Manpage for BSD 4.3 host command.
+.\" Contact ahd@kew.com to correct errors or typos.
+.TH HOST "1" "2026-10-19" "Kendra Electronic Wonderworks" "Local Utilities"
+.SH NAME
+host - DNS lookup utility implementation for BSD 4.3
+.SH SYNOPSIS
+.BR host
+.IB {name}
+.SH DESCRIPTION
+.BR host
+is a simple utility for performing DNS lookups on BSD 4.3. It is normally used to convert names to IP addresses and vice versa.
+
+.IB name 
+is the domain name that is to be looked up. It can also be a dotted-decimal IPv4 address, in which case 
+.BR host
+by default performs a reverse lookup for that address.
+
+When no arguments are given, 
+.BR host
+prints a short summary of its command-line argument.
+.SH OPTIONS
+Unlike modern implementations of this utility, the 
+.BR host 
+implementation for BSD 4.3 does not have options.
+.SH SEE ALSO
+.BR gethostbyname (3)
+.BR gethostbyaddr(3)
+.BR resolver(5)
+.SH BUGS
+No known bugs.
+
+The lack of modern bells and whistles could be considered a bug, but at the same time even without frills the program fulfills its basic function of address and name resolution.
+
+Futhermore, year BSD 4.3 was released (1985), the Internet was a much simpler place. IPv6 didn't exist, nor did internationalized domain name, and numerous record types (like MX) didn't exist either.
+
+(Nor, for that matter, did the Morris Worm.)
+
+.SH AUTHOR
+Drew Derbyshire (ahd@kew.com).
+
+The source code for 
+.BR host
+is original code. This manual page is heavily derived (and stripped down) from the manual page for the modern version of 
+.BR host
+by Internet Systems Consortium.
+.SH COPYRIGHT
+2026, Internet Systems Consortium
+
+2026, Kendra Electronic Wonderworks
