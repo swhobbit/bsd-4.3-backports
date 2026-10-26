@@ -2,10 +2,10 @@
 bin_PROGRAMS = host
 
 
-host_SOURCES = host.c strcasecmp.c herror
+host_SOURCES = host.c 
 MAN = host.1
 
-CFLAGS= -g
+CFLAGS= -g ${INCPATH}
 DESTDIR=/usr/local
 
 .c.o: ; cc -c ${CFLAGS} -o $@ $*.c
@@ -25,6 +25,3 @@ install: all
 
 clean:
 	rm -f *.o host core
-
-# herror.o:	herror.c
-# strcasecmp.o:	strcasecmp.c

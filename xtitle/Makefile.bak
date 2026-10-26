@@ -1,0 +1,25 @@
+#
+# @(#)Makefile  1.1 (2.11BSD) 2020/3/23
+#
+
+CFLAGS= -O
+SEPFLAG= -i
+DESTDIR=/usr/local
+
+all: xtitle ${MAN}
+
+xtitle: xtitle.o 
+	cc -o xtitle xtitle.o
+
+xtitle.o: xtitle.c 
+	cc ${CFLAGS} -c xtitle.c
+
+install: all ${DESTDIR}/bin
+	install -c -s xtitle ${DESTDIR}/bin
+
+${DESTDIR}/bin:
+	[ -d ${DESTDIR} ] || mkdir ${DESTDIR}
+	[ -d ${DESTDIR}/bin ] || mkdir ${DESTDIR}/bin
+
+clean:
+	rm -f xtitle.o xtitle 
