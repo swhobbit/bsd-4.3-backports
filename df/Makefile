@@ -29,7 +29,7 @@ install:	${OPERATOR}
 	install -m 2755 -s df ${DESTDIR}/bin/df
 
 clean:
-	rm -f ${BINS} -g operator a.out core *.s *.o errs
+	rm -f ${BINS} a.out core *.s *.o errs
 
 depend: expr.c
 	for i in ${BINS}; do \

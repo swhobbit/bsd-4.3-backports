@@ -4,7 +4,7 @@ bin_PROGRAMS = udpc rdatet
 
 rdate_SOURCES = rdate.c rdate.h
 
-CFLAGS= -O
+CFLAGS= -O -I.:library 
 DESTDIR=
 
 .c.o: ; cc -c ${CFLAGS} -o $@ $*.c
@@ -14,8 +14,6 @@ all: udpc rdatet ${MAN}
 e: everything
 
 everything: clean all
-
-
 
 udpc.c: udpc.o 
 

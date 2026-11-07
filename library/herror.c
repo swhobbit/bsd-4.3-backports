@@ -1,4 +1,6 @@
-/* vi: tabstop=4 sw=4 */
+/* 
+	vi: tabstop=4 sw=4
+*/
 
 /*
  * 2026-10-02 Backported to BSD 4.3 by Drew Derbyshire (ahd@kew.com) at

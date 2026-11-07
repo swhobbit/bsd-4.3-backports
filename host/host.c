@@ -20,34 +20,7 @@
 #include <string.h>
 #include <sys/socket.h>
 
-/*------------------------------------------------------------------- */
-/*         Do basic check that parameter is an IPv4 address           */
-/*------------------------------------------------------------------- */
-
-int
-is_ipv4_addr(text)
-	char * text;
-{
-	int column;
-
-    for (column = 0; column < strlen(text); column++ ) {
-
-         if (isdigit(text[column]))
-         {
-			continue;
-         }
-
-         if (text[column] == '.')
-         {
-			continue;
-         }
-	   	
-         return 0;                /* Not IP address */
-    }
-
-    return 1;                     /* It IS an address */
-}
-
+#include <herror.h>
 
 /*------------------------------------------------------------------- */
 /*   Main program to look up name/address provided on command line    */
@@ -61,7 +34,8 @@ main(argc, argv)
 	char    *argv0;	    /* program name */
 
     struct hostent *result = NULL;
-    struct in_addr address;
+    long address;
+	char arg_is_address = 0;
 
     /* Store the name of the program */
     argv0 = strrchr(argv[0], '/');
@@ -76,22 +50,19 @@ main(argc, argv)
 #endif
 
     if (argc == 1) {
-         printf("%s: No arguments. Usage:\n\t%s hostname\n\t%s IP-address\n",
+        printf("%s: No arguments. Usage:\n\t%s hostname\n\t%s IP-address\n",
 		argv0,
 		argv0,
 		argv0);
          exit(__LINE__);
     }
 
-    if (is_ipv4_addr(argv[1])) {
-         unsigned long address = inet_addr(argv[1]);
-		 if (address == 0xffffffff) {
-			printf("%s: String \"%s\" cannot be parsed as an IP address\n",
-				   argv0,
-				   argv[1]);
-			exit(__LINE__);
-		 }
-         result = gethostbyaddr(&address, sizeof(address), AF_INET);
+	address = (long) inet_addr(argv[1]);
+    if (address != -1) {
+		 arg_is_address = 1;
+         result = gethostbyaddr((char *) &address,
+		 						sizeof(address),
+								AF_INET);
     }
     else {
          result = gethostbyname(argv[1]);
@@ -111,7 +82,7 @@ main(argc, argv)
     memset(&address, 0, sizeof address);
     memcpy((void *) &address, result->h_addr, sizeof address);
 
-	if (is_ipv4_addr(argv[1])) {
+	if (arg_is_address) {
 		printf("%s has a domain name pointer to %s\n",
 				argv[1],
 				result->h_name); 

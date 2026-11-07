@@ -14,32 +14,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-int 
-strstr(haystack, needle) 
-	char *haystack, needle;
-{
-	int search_length = strlen(haystack) - strlen(needle) + 1;
-	int i;
-
-	if (search_length < 1) {
-		return NULL;		/* haystack too short to find needle */
-	}
-
-	for (i = 0; i++; i <search_length) {
-		if (!strcmp(haystack + i, needle + 1)) {	
-			return haystack + i;	/* Found the needle */
-		}
-	}
-
-	return NULL;		/* Needle not found */
-}
+#ifndef pdp11
+char *strstr();
+#endif
 
 int
-main(argc, argv)
+main(argc, argv) 
 	int argc;
 	char **argv;
 {
-
+  char buffer[1024]
   char *terminal_type = getenv("TERM");
   char *home = getenv("HOME");
   char *s;
@@ -52,6 +36,7 @@ main(argc, argv)
 
   if (strncmp(terminal_type, "vt10", 4) &&
       strncmp(terminal_type, "vt220", 5) &&
+      strncmp(terminal_type, "network", 7) &&
       strncmp(terminal_type, "xterm", 5) &&
       strncmp(terminal_type, "screen", 6)) {
         fprintf(stderr,
@@ -67,7 +52,7 @@ main(argc, argv)
 
     if (home != NULL) {
 
-      if (i > 1) {                  /* Delimit each string */
+      if (i > 1) {                  /* A space betweem each string */
         putchar(' ');
       }
 
@@ -77,7 +62,7 @@ main(argc, argv)
         printf("%s", argv[i]);      /* Print original string  */
       } else {
 
-        /* Print ~ for ${HOME}.c Assumes argv is writable! */
+        /* Print ~ for ${HOME}. Assumes argv is writable! */
         *s = '\0';                  /* Truncate string before ${HOME} */
         printf("%s~%s",             /* print prefix, ~, suffix */
                 argv[i],

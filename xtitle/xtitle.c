@@ -15,7 +15,7 @@
 #include <string.h>
 
 #ifndef pdp11
-char *strstr();
+#include <kewstr.h>
 #endif
 
 int

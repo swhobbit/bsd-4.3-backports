@@ -4,6 +4,7 @@
  * Kendra Electronic Wonderworks, Kenmore WA.
  */
 
+#include <stdio.h>
 
 extern int errno;
 extern int sys_nerr;

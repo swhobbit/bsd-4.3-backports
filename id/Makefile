@@ -2,6 +2,9 @@
 # Modified 2024-0924 by ahd@kewm.com (Drew Derbyshire) make gneeric and to use
 # /usr/local as destination.
 #
+INCPATH=-I../library 
+
+.c.o: ; cc -c ${CFLAGS} $(INCPATH) -o $@ $*.c
 
 CFLAGS= -O ${INCPATH}
 MAN=	id.0

@@ -74,7 +74,7 @@ main(argc, argv)
 			break;
 
 		default:
-			fprintf(stderr, "usage: df [ -i ] [ filsys... ]\n");
+			fprintf(stderr, "usage: df [ -i ] [ -h | -m ] [ filsys... ]\n");
 			exit(0);
 		}
 		argc--, argv++;

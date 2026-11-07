@@ -22,72 +22,58 @@
 /*                      Kenmore, WA                                   */
 /*------------------------------------------------------------------- */
 
-     double atof(nptr)
-     char *nptr;
+#include <sys/types.h>
 
-     atoi(nptr)
-     char *nptr;
+     double atof();
 
-     long atol(nptr)
-     char *nptr;
+     atoi();
 
-     srand(seed)
-     int seed;
+     long atol();
+
+     srand();
 
      int rand();
 
      long random();
 
-     srandom(seed)
-     int seed;
+     void srandom();
 
-     char *initstate(seed, state, n)
-     unsigned seed;
-     char *state;
-     int n;
+     char *initstate();
 
-     char *setstate(state)
-     char *state;
+     char *setstate();
 
-     char *malloc(size)
-     unsigned size;
+     char *malloc();
 
-     free(ptr)
-     char *ptr;
+     free();
 
-     char *realloc(ptr, size)
-     char *ptr;
-     unsigned size;
+     char *realloc();
 
-     char *calloc(nelem, elsize)
-     unsigned nelem, elsize;
+     char *calloc();
 
-     char *alloca(size)
-     int size;
+     char *alloca();
 
      void abort();
 
-     _exit(status)
-     int status;
+     _exit();
 
 
 #ifndef exit 
-#define exit(status) _exit(status)
+#define exit() _exit()
 #endif 
 
-     char *getenv(name)
-     char *name;
+     char *getenv();
 
-     int system(string)
-     char *string;
+     int system();
 
-     qsort(base, nel, width, compar)
-     char *base;
-     int (*compar)();
+     qsort();
 
-     int abs(i)
-     int i;
+     int abs();
 
-     typedef unsigned int size_t;
+	/* 
+		perror() should be defined in errno.h; the file exists in
+		BSD 4.3.s, but the method is missing.
+	 */
+
+	 void perror();
 
 #endif

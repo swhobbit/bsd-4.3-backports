@@ -1,5 +1,5 @@
 #
-# Modified 2024-0924 by ahd@kew.com (Drew Derbyshire) make gneeric and to use
+# Modified 2024-0924 by ahd@kew.com (Drew Derbyshire) make generic and to use
 # /usr/local as destination.
 #
 
