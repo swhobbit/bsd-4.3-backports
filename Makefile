@@ -21,7 +21,12 @@ build: all
 
 clean install all: ${SUBDIRS} clean_root 
 	cd library ; make wrapmake
-	for i in ${SUBDIRS} ; do (cd $$i ; echo ">>> $$i" ; ${WRAPMAKE} ${MFLAGS} $@ ); done
+	for i in ${SUBDIRS} ;	\
+		do (cd $$i ;	\
+		 echo ;	\
+		 echo ">>> $@ in $$i" ;	\
+		 ${WRAPMAKE} ${MFLAGS} $@ );	\
+	   done
 
 clean_root : 
 	rm  -f *.bak
@@ -34,6 +39,11 @@ full_tar:	clean ${Z_FULL_TAR} FRC
 
 backup_tar: clean ${Z_FULL_TAR} FRC
 	[ -d backup ] || mkdir backup
+	- mv backup/`basename ${Z_FULL_TAR}`.8 backup/`basename ${Z_FULL_TAR}`.9
+	- mv backup/`basename ${Z_FULL_TAR}`.7 backup/`basename ${Z_FULL_TAR}`.8
+	- mv backup/`basename ${Z_FULL_TAR}`.6 backup/`basename ${Z_FULL_TAR}`.7
+	- mv backup/`basename ${Z_FULL_TAR}`.5 backup/`basename ${Z_FULL_TAR}`.6
+	- mv backup/`basename ${Z_FULL_TAR}`.4 backup/`basename ${Z_FULL_TAR}`.5
 	- mv backup/`basename ${Z_FULL_TAR}`.3 backup/`basename ${Z_FULL_TAR}`.4
 	- mv backup/`basename ${Z_FULL_TAR}`.2 backup/`basename ${Z_FULL_TAR}`.3
 	- mv backup/`basename ${Z_FULL_TAR}`.1 backup/`basename ${Z_FULL_TAR}`.2
@@ -47,7 +57,7 @@ ${FULL_TAR}:	${SUBDIRS} ${ROOT_FILES}
 	tar cf ${FULL_TAR}  $? 
 
 baby_tars: clean ${SUBDIRS} tar/43bsd_root.tar.Z
-	for i in ${SUBDIRS}; do ./build_baby_tar.sh $$i ; done
+	for i in ${SUBDIRS}; do tar cvf tar/43bsd_$${i}.tar $${i} ; done
 
 tar/43bsd_root.tar: ${ROOT_FILES}
 	tar cf $@ ${ROOT_FILES}
