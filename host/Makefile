@@ -10,7 +10,7 @@ MAN = host.1
 CFLAGS= -g ${INCPATH} -Llibrary
 DESTDIR=/usr/local
 
-.c.o: ; cc  -D${DATE} -D${TIME} -c ${CFLAGS} -o $@ $*.c
+.c.o: ; cc  -c ${CFLAGS} -o $@ $*.c
 
 all: host  $(MAN)
 
@@ -19,8 +19,7 @@ e: everything
 everything: clean all
 
 host: host.o 
-	echo cc ${CFLAGS} -D${DATE} -D${TIME} -o $@ host.o -L../library -lkew 
-	cc ${CFLAGS} -D${DATE} -D${TIME} -o $@ host.o -L../library -lkew 
+	cc ${CFLAGS} -o $@ host.o -L../library -lkew 
 
 install: all 
 	install -c -s host ${DESTDIR}/bin
