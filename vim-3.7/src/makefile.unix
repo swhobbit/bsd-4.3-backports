@@ -56,7 +56,7 @@ LIBS = -ltermcap
 #>>>>> end of choices
 ###########################################################################
 
-CFLAGS = -c $(MACHINE) $(DEFS)
+CFLAGS = -c $(MACHINE) $(DEFS) -I../../library
 
 INCL = vim.h globals.h param.h keymap.h macros.h ascii.h term.h unix.h debug.h
 
