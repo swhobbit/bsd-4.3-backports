@@ -11,13 +11,14 @@
 /*                      Kenmore, WA                                   */
 /*------------------------------------------------------------------- */
 
-#include <kewstr.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/dir.h>
 #include <time.h>
 #include <unistd.h>
-#include <errno.h>
-#include <sys/dir.h>
+
+#include <kewstr.h>
 
 extern int errno;
 
@@ -53,22 +54,30 @@ int main(argc, argv)
 		original full name intact.
 	 */
 	program_name = strrchr(argv[0] , '/');
-	program_name = (program_name == NULL) ? strdup(argv[0]) : strdup(program_name +1);
+	program_name = (NULL == program_name) ? strdup(argv[0]) : strdup(program_name +1);
 
 	if (argc > 1) {
 		filename = argv[1];
 	}
 	else { 
 		errno = E2BIG;
-		fprintf(stderr, "%s: Missing file name argument\n", program_name);
+		fprintf(stderr, "%s: Missing required file name argument\n", program_name);
 		exit(errno);
+	}
+
+	if (stat("NO_WRAPMAKE", buffer) == 0)
+	{
+		/* Just invoke the original make unaltered */
+		printf("%s Invoking orginal makewfile unaltered.\n", program_name);
+		execv("/bin/make", &argv[2]);
+		perror("/bin/make");
 	}
 
 	now [strlen(now) -1] = '\0';
 	printf("%s: Current time and date (%s)\n", program_name, now);
 
 	/* Wed Oct 28 18:34:26 2026 */
-	strtok(now, blank);				/* day name, ignored	*/
+	strtok(now, blank);					/* day name, ignored	*/
 	mmm		= strtok(NULL, blank);		/* 3 letter month		*/
 	day		= strtok(NULL, blank);		/* day of month 		*/ 
 	hhmmss	= strtok(NULL, blank);		/* 24 hour time			*/
@@ -76,64 +85,107 @@ int main(argc, argv)
 
 	child_argv[child_argc++] = "/bin/make";
 
-	sprintf(buffer, "__DATE__=%c%s %s %s%c", quote,  mmm, day, year, quote);
-	child_argv[child_argc++] = strdup(buffer);
-
-	sprintf(buffer, "__TIME__=%c%s%c", quote, hhmmss, quote);
-	child_argv[child_argc++] = strdup(buffer);
-
-    sprintf(buffer, "MAKE=%c%s %s%c", quote, argv[0], filename, quote);
+    sprintf(buffer, "MAKE=%s %s", argv[0], filename);
     child_argv[child_argc++] = strdup(buffer);
 
+	sprintf(buffer, "__DATE__=%s %s %s", mmm, day, year);
+	child_argv[child_argc++] = strdup(buffer);
+
+#ifdef DEBUG
+	printf("INT  >>>\t%d\t%s\n", child_argc - 1, child_argv[child_argc - 1]);
+#endif
+
+	sprintf(buffer, "__TIME__=%s", hhmmss);
+	child_argv[child_argc++] = strdup(buffer);
+
+#ifdef DEBUG
+	printf("INT  >>>\t%d\t%s\n", child_argc - 1, child_argv[child_argc - 1]);
+#endif
+
+#ifdef DEBUG
+	printf("INT  >>>\t%d\t%s\n", child_argc - 1, child_argv[child_argc - 1]);
+	printf("\nOpening file %s with %d byte buffer after %d generated arguments\n\n",
+		   filename,
+		   sizeof buffer,
+		   child_argc - 1);
+#endif
+
+	
 	stream = fopen(filename, "r");
-	if (stream == NULL) {
+	if (NULL == stream) {
 		perror(filename);
 		printf("%s: %s\n", program_name, strerror(filename));
 		exit(errno);
 	}
 
+	line = buffer;				/* So it's not NULL */
 	while (line != NULL) {
 		
 		line = fgets(buffer, sizeof buffer, stream);	
-		if (line == NULL) {
-			printf("EOF\n");
+		if (NULL == line) {
+#ifdef DEBUG
+			printf("FILE >>>\t*** EOF ***\n");
+#endif
 			break;
 		}
-		else {
-			line = strdup(line);	
 
-			if (line = NULL) {
-				perror(strdup);
-				exit(errno);
-			}
-
-			ptr = strrchr('\n');
-			if (ptr != NULL) {
-				*ptr = '\0';
-			}
-
-			/* DEBUG */
-			child_argv[child_argc++] = strdup(line);
-			printf(">>>\t%d\t%s\n", child_argc - 1, child_argv[child_argc -1]);
+		ptr = strrchr(line, '\n');
+		if (ptr != NULL) {
+			*ptr = '\0';
 		}
+
+		if (strlen(line) == 1 &&  *line == '\n') {
+			continue; 					/* Empty (before EOF)? Skip. */
+		}
+
+		child_argv[child_argc++] = strdup(line);
+		if (NULL == child_argv[child_argc - 1] ) {
+			perror(strdup);
+			exit(errno);
+		}
+
+		if (strlen(child_argv[child_argc - 1]) != strlen(line)) {
+			abort();
+		}
+
+#ifdef DEBUG
+		printf("FILE >>>\t%d\t\"%s\"\t(%d bytes)\n",
+				child_argc - 1,
+				child_argv[child_argc - 1],
+				strlen(line));
+#endif
 	}
+
+#ifdef DEBUG
+	printf("\nClosing file %s after %d arguments processed\n\n", filename, child_argc - 1);
+#endif
 
 	/* Add command line arguments */
 	while(arg_used < argc) {
 		child_argv[child_argc++] = argv[arg_used++];
+
+#ifdef DEBUG
+	printf("CLI  >>>\t%d\t%s\n", child_argc - 1, child_argv[child_argc - 1]);
+#endif
+
 	}
+		
+#ifdef DEBUG
+	printf("\nDone after %d total arguments\n", child_argc - 1);
+#endif
 
 	child_argv[child_argc++] = (char *) NULL; /* Terminate arg list */
 	
 	fclose(stream);
 
-	printf("%s: Generated %d arguments: ", program_name, child_argc - 1);
+	printf("%s: Generated %d arguments:\n\n", program_name, child_argc - 2);
 
 	for (child_argc = 0; child_argv[child_argc] != NULL; child_argc++) {
 		printf("%s ", child_argv[child_argc]);
 	}
 
-	putc('\n', stdout);
+	putc('\n\n\n', stdout);
+	fflush(stdout);
 
 	execv(child_argv[0], child_argv);
 	perror(child_argv[0]);
