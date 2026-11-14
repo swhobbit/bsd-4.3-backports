@@ -128,8 +128,10 @@ DEFS =	"-DTERMIO=$(TERMIO)" \
 	"-DGLOB=$(GLOB)" \
 	"-DXENIX=$(XENIX)"
 
-CFLAGS = $(OPTIM) $(DEFS)
+#CFLAGS = $(OPTIM) $(DEFS)
 
+.c.o: 	
+	$(CC) $(CFLAGS) $(OPTIM) $(DEFS) -c $<
 
 all: less less.1
 
