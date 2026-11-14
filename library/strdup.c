@@ -18,13 +18,13 @@ char *strdup(from)
 {
 	char *to;
 
-	if (from == NULL) {
+	if (NULL == from) {
 		return NULL;
 	}
 
 	to = malloc(strlen(from) + 1);
 
-	if (to == NULL) {
+	if (NULL == to) {
 		/* Error code already set */
 		return NULL;
 	}
