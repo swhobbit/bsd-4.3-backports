@@ -1,4 +1,4 @@
-INCFILES="-I. -I../library" 
-INCLUDES="-I. -I../library" 
-LIBRARY="-L../library -lkew
-CFLAGS=-O -O ${LIBRARY} ${INCLUDES} -D__DATE__=${DATE} -D__TIME__=${TIME}
+INCFILES=-I. -I../library 
+INCLUDES=-I. -I../library 
+LIBRARY=-L../library -lkew
+CFLAGS=-c -O ${LIBRARY} ${INCLUDES} -D__DATE__="\"${__DATE__}\"" -D__TIME__="\"${__TIME__}\""
