@@ -1,6 +1,6 @@
 INCLUDES=-I.  -I../library
 LIBRARY=-L. -lkew
-CFLAGS=${INCLUDES} -O
+CFLAGS=${INCLUDES} -g
 DESTDIR=/usr/local
 WRAPMAKE=$${PWD}/wrapmake $${PWD}/wrapmake.txt
 MAKE=${WRAPMAKE}
@@ -13,11 +13,11 @@ all: libkew.a wrapmake
 	
 test:	wrapmake wrapmake.txt
 	ls -l wrapmake.*
-	echo ${WRAPMAKE} wrapmake.txt innertest
-	${WRAPMAKE} wrapmake.txt innertest
+	${WRAPMAKE} wrapmake.txt innertest xxx=yyy
 
 innertest:
-	echo xxx="${xxx}" MFLAGSs="${MFLAGS}" __DATE__="${DATE}" __TIME__="${TIME}"
+	echo $#
+	echo xxx="${xxx}" MFLAGSs="${MFLAGS}" __DATE__="${__DATE__}" __TIME__="${__TIME__}"
 
 # Rebuild of live wrapmake will be forced at next build because
 # first line removes its prerequisite object file
@@ -27,7 +27,7 @@ clean:
 
 install:	${DESTDIR}/include ${DESTDIR}/lib
 
-libkew.a:	herror.o strcasecmp.o strerror.o strstr.o strdup.o
+libkew.a:	herror.o strcasecmp.o strerror.o strstr.o strdup.o strftime.o
 	ar cr $@ $?
 	ranlib $@
 
