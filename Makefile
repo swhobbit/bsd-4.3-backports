@@ -1,6 +1,7 @@
 SUBDIRS=library	\
 	bin	\
-	date df	\
+	date	\
+	df	\
 	host	\
 	id	\
 	less	\
@@ -48,7 +49,6 @@ backup_tar: clean ${Z_FULL_TAR} FRC
 	- mv backup/`basename ${Z_FULL_TAR}`.2 backup/`basename ${Z_FULL_TAR}`.3
 	- mv backup/`basename ${Z_FULL_TAR}`.1 backup/`basename ${Z_FULL_TAR}`.2
 	- mv backup/`basename ${Z_FULL_TAR}`   backup/`basename ${Z_FULL_TAR}`.1
-	cp  ${Z_FULL_TAR} backup
 
 ${Z_FULL_TAR}:	${FULL_TAR}
 	compress -f ${FULL_TAR}
