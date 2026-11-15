@@ -18,12 +18,15 @@ static char sccsid[] = "@(#)date.c	4.19 (Berkeley) 5/18/86";
  * Date - print and set date
  */
 
-#include <sys/param.h>
-#include <stdio.h>
-#include <sys/time.h>
-#include <sys/file.h>
 #include <errno.h>
+#include <memory.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/file.h>
+#include <sys/param.h>
+#include <sys/time.h>
 #include <syslog.h>
+#include <time.h>
 #include <utmp.h>
 
 #define WTMP	"/usr/adm/wtmp"
@@ -37,21 +40,17 @@ int	retval;
 char	*timezone();
 static	int dmsize[12] =
     { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-static	char *usage = "usage: date [-n] [-u] [yymmddhhmm[.ss]]\n";
+static	char *usage = "usage: date [-n] [-u] [yymmddhhmm[.ss] | +output_fmt]\n";
 
 struct utmp wtmp[2] = {
 	{ "|", "", "", 0 },
 	{ "{", "", "", 0 }
 };
 
-char	*ctime();
-char	*asctime();
-struct	tm *localtime();
-struct	tm *gmtime();
-char	*strcpy(), *strncpy();
 char	*username, *getlogin();
 long	time();
 uid_t	getuid();
+char * fstrftime();
 
 main(argc, argv)
 	int argc;
@@ -89,8 +88,16 @@ main(argc, argv)
 	if (argc == 1) 
 		goto display;
 
+	if ('+' == argv[1][0])
+	{
+		fstrftime(argv[1]);
+		exit(99);
+	}
+
+	printf("---> \n\"%s\"\t\"%s\"\n", argv[0], argv[1]);
+
 	if (getuid() != 0) {
-		fprintf(stderr, "You are not superuser: date not set\n");
+		fprintf(stderr, "You are not root: date not set\n");
 		retval = 1;
 		goto display;
 	}
@@ -144,6 +151,31 @@ display:
 		printf("%s", tzn);
 	printf("%s", ap+19);
 	exit(retval);
+}
+
+char *
+fstrftime(patttern) 
+	char *patttern;
+{
+	struct tm now;
+	struct timeval tv;
+	struct timezone tz;
+	char buffer[BUFSIZ];
+
+	(void) gettimeofday(&tv, &tz);
+	if (uflag) {
+		memcpy(&now, gmtime((time_t *)&tv.tv_sec), (size_t) sizeof now);
+	} else {
+		memcpy(&now, localtime((time_t *)&tv.tv_sec), (size_t) sizeof now);
+	}
+
+	if (strftime(buffer, (size_t) sizeof buffer, patttern + 1, &now)) {
+		printf("%s\n", buffer);
+	} else {
+		perror("strftime");
+	}
+	exit(0);
+
 }
 
 gtime()
