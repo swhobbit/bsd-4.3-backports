@@ -67,11 +67,9 @@
 
      qsort();
 
-     int abs();
-
 	/* 
 		perror() should be defined in errno.h; the file exists in
-		BSD 4.3.s, but the method is missing.
+		BSD 4.3, but the method is missing.
 	 */
 
 	 void perror();
