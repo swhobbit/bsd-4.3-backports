@@ -1,5 +1,6 @@
 all:
-	( cd src; make )
+	# ( cd src; make )
+	@echo "*** Build disabled for vim ***"
 
 clean:
 	( cd src;  make $@ )
