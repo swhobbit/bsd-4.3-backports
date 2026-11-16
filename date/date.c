@@ -94,8 +94,6 @@ main(argc, argv)
 		exit(99);
 	}
 
-	printf("---> \n\"%s\"\t\"%s\"\n", argv[0], argv[1]);
-
 	if (getuid() != 0) {
 		fprintf(stderr, "You are not root: date not set\n");
 		retval = 1;
