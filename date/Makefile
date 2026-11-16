@@ -6,21 +6,21 @@ DESTDIR=/bin
 
 all: date test
 
-date:	date.o
+date:	date.o ../library/libkew.a
 	cc -g -o date date.o ${LIBRARY} 
 
 date.o: date.c
 
-test: date 
+test: date  test-date.sh
 	date
-	./date-test.sh
-	./date-test.sh -u
+	./test-date.sh
+	./test-date.sh -u
 
 # Unlike most of the programs in this repository, we installed into the
 # original location because one of its functions is set the system date 
 # and the original binary could not set it in the 2000s.
 install: all 
-	install -c -s date ${DESTDIR}/bin
+	install -c -s date ${DESTDIR}
 
 clean:
-	rm -f date *.o *.bak *~
+	rm -f core date *.o *.bak *~
