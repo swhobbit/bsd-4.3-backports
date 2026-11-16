@@ -23,7 +23,6 @@ main(argc, argv)
 	int argc;
 	char **argv;
 {
-  char buffer[1024]
   char *terminal_type = getenv("TERM");
   char *home = getenv("HOME");
   char *s;

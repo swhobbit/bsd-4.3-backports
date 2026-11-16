@@ -1,3 +1,6 @@
+INCPATH=-I../library
+LIBRARY=-L../library -lkew
+
 #
 # Modified 2024-0924 by ahd@kew.com (Drew Derbyshire) make generic and to use
 # /usr/local as destination.
@@ -10,21 +13,14 @@ DESTDIR=/usr/local
 
 all: xtitle ${MAN}
 
-xtitle: xtitle.o strstr.o
-	cc -o xtitle xtitle.o strstr.o
+xtitle: xtitle.o
+	cc -o xtitle xtitle.o ${LIBRARY}
 
 xtitle.o: xtitle.c 
 	cc ${CFLAGS} -c xtitle.c
 
 xtitle.c:
 	@[ -f xtitle.c ] && echo "xtitle.c not built (already exists)"
-
-strstr.o: strstr.c 
-	cc ${CFLAGS} -c strstr.c
-
-strstr.c:
-	@[ -f strstr.c ] && echo "strstr.c not built (already exists)"
-
 
 xtitle.1:
 	@[ -f xtitle.1 ] && echo "xtitle.1 not built (already exists)"
@@ -44,4 +40,4 @@ install: all
 	install -c -o root -g staff -m 444 xtitle.l ${DESTDIR}/man/man1
 
 clean:
-	rm -f *.o xtitle ${MAN}
+	rm -f core *.o xtitle ${MAN}

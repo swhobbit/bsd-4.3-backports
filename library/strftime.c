@@ -16,6 +16,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 
+#include <ctype.h>
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -68,8 +69,11 @@ strftime(result, result_size, format, input_tm)
 	char *number_fmt = NULL;
 	size_t column = 0;
 	size_t used = 0;
+	size_t i;									/* GOD is REAL unless declared INTEGER */
 	unsigned short is_unique_time;		/* Does current time match user time? */
-	unsigned short is_gmt;					/* User requested GMT time zone */ 
+	unsigned short is_gmt;					/* User requested GMT time zone */
+	unsigned short upper_case_result;
+	unsigned short swap_case_result;
 
 	memset(result, '\0', result_size);
 	memcpy(&user_tm, input_tm, (size_t) sizeof user_tm);	/* Prevent clobbering */
@@ -83,7 +87,7 @@ strftime(result, result_size, format, input_tm)
 	/* Guess user time is in GMT; we'll set is_gmt next line. */
 	memcpy(&now_tm, gmtime(&tv.tv_sec), (size_t) sizeof now_tm);
 
-	is_gmt = now_tm.tm_hour == user_tm.tm_hour; 
+	is_gmt = now_tm.tm_hour == user_tm.tm_hour;
 
 	if (! is_gmt) {
 		/* Not GMT time, make local time. */
@@ -95,16 +99,33 @@ strftime(result, result_size, format, input_tm)
 	while ((used < result_size) && (column <= format_size)) {
 		if ('%' == format[column++]) {
 
-			/* 
+			/*
 				Look for an optional prefix numeric format character for
 				two digit numeric fields. (GNU extension)
 
 				Note that if any of the prefixes are used on an unsupported
-				action character (composite, string, domain n<10 or n>99), 
-				the prefix and its format are silently ignored. 
+				action character (composite, string, domain n<10 or n>99),
+				the prefix and its format are silently ignored.
 			*/
 
+
+			upper_case_result = 0;
+			swap_case_result = 0;
+	
 			switch(format[column]) {
+
+				case '^':
+					/* Upper case result */
+					upper_case_result = 1;
+					column++;		/* Step to action char */
+					break;
+
+				case '#':
+					/* Swap case of result, mostly good for TZ */
+					swap_case_result = 1;
+					column++;		/* Step to action char */
+					break;
+
 				case '-':
 					/* No padding */	
 					number_fmt = "%d";
@@ -124,7 +145,7 @@ strftime(result, result_size, format, input_tm)
 					break;
 
 				default:
-					/* 
+					/*
 						No padding character. Treat as zero pad but don't
 						advance the column -- the current column is already
 						the action character. 	
@@ -133,7 +154,7 @@ strftime(result, result_size, format, input_tm)
 					break;
 			}
 
-  			/* Pick a conversion character and act on it. */ 
+  			/* Pick a conversion character and act on it. */
 
 			switch(format[column++]) {
 
@@ -278,7 +299,7 @@ strftime(result, result_size, format, input_tm)
 
 				case 'k':
 					/* Hour on 24-hour clock. no leading zero */
-					sprintf(buffer, number_fmt, user_tm.tm_hour);
+					sprintf(buffer, "%d", user_tm.tm_hour);
 					break;
 
 				case 'I':
@@ -312,12 +333,12 @@ strftime(result, result_size, format, input_tm)
 
 				case 'f':
 					/* Microsecond */
-					sprintf(buffer, "%06ld", tv.tv_usec); 
+					sprintf(buffer, "%06ld", tv.tv_usec);
 					if (is_unique_time) {
 						fprintf(stderr,
 							"%s %ld.%06ld %s (%s)",
 							"Current Microseconds",
-							tv.tv_sec, 
+							tv.tv_sec,
 							tv.tv_usec,
 							" are not from same source as user specified time",
 							asctime(&user_tm));
@@ -326,7 +347,7 @@ strftime(result, result_size, format, input_tm)
 
 				case 'Z':
 					/* timezone name or abbreviation */
-					sprintf(buffer, "%s", 
+					sprintf(buffer, "%s",
 					is_gmt ?
 						"GMT" :
 						timezone(tz.tz_minuteswest, user_tm.tm_isdst));
@@ -335,7 +356,7 @@ strftime(result, result_size, format, input_tm)
 				case 'z':
 					/* Timezone offset */
 
-					/* 
+					/*
 						Note the returned offset is WEST of GMT, and we want to
 						represent that times EAST of GMT are positive.
 					*/
@@ -353,7 +374,7 @@ strftime(result, result_size, format, input_tm)
 						fprintf(stderr,
 							"%s %ld.%06ld %s (%s)",
 							"Seconds since UNIX Epoch",
-							tv.tv_sec, 
+							tv.tv_sec,
 							tv.tv_usec,
 							" are not from same source as user specified time",
 							asctime(&user_tm));
@@ -365,7 +386,7 @@ strftime(result, result_size, format, input_tm)
 					sprintf(buffer, "%3ld", user_tm.tm_yday + 1);
 					break;
 
-				case 't': 
+				case 't':
 					/* tab (GNU) */
 					strcpy(buffer, "\t");
 					break;
@@ -373,7 +394,7 @@ strftime(result, result_size, format, input_tm)
 				case 'n':
 					/* Newline (GNU) */
 					strcpy(buffer, "\n");
-					break; 
+					break;
 
 				case '\0':
 					/* Premature end of the template. Fatal! */
@@ -396,7 +417,7 @@ strftime(result, result_size, format, input_tm)
 			} /* (outer) switch */
 
 
-#ifdef DEBUG 
+#ifdef DEBUG
 			printf("Columnn %2d pattern '%c'.\t", column, format[column - 1]);
 #endif
 			
@@ -407,10 +428,32 @@ strftime(result, result_size, format, input_tm)
 			buffer[0] = format[column - 1];
 			buffer[1] = '\0';
 
-#ifdef DEBUG 
+#ifdef DEBUG
 			printf("Columnn %2d literal '%s'.\t", column, buffer);
 #endif
 		}
+
+		/* Perform requested icase transformations */
+
+		if (upper_case_result) {
+			for (i = 0; i < strlen(buffer); i++) {
+				if (isascii(buffer[i]) && islower(buffer[i])) {
+					buffer[i] = toupper(buffer[i]);
+				}
+			}
+		} else if (swap_case_result) {
+			for (i = 0; i < strlen(buffer); i++) {
+
+				/* Swap case of each alpahbetic character */
+
+				if (isascii(buffer[i]) && islower(buffer[i])) {
+					buffer[i] = toupper(buffer[i]);
+				}  else if (isascii(buffer[i]) && isupper(buffer[i])) {
+					buffer[i] = tolower(buffer[i]);
+				}
+			}
+		}
+
 
 		/* Add data copied/generated from our buffer to user result */
 
@@ -418,7 +461,7 @@ strftime(result, result_size, format, input_tm)
 			strcat((char *) result, (char *) buffer);
 			used += strlen((char *)buffer);
 
-#ifdef DEBUG 
+#ifdef DEBUG
 			printf("Output (%d chars): \"%s\"\n", used, result);
 #endif
 		}
