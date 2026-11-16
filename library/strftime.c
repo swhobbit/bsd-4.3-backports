@@ -16,7 +16,6 @@
 #include <sys/time.h>
 #include <sys/types.h>
 
-#include <errno.h>
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +23,6 @@
 #include <time.h>
 
 char  *timezone();
-extern int errno;
 
 size_t
 strftime(result, result_size, format, input_tm)
@@ -67,10 +65,11 @@ strftime(result, result_size, format, input_tm)
 	char buffer[BUFSIZ];
 
 	size_t format_size = strlen(format);
+	char *number_fmt = NULL;
 	size_t column = 0;
 	size_t used = 0;
-	unsigned short is_unique_time;			/* Does current time match user time? */
-	unsigned short is_gmt;						/* User requested GMT time zone */ 
+	unsigned short is_unique_time;		/* Does current time match user time? */
+	unsigned short is_gmt;					/* User requested GMT time zone */ 
 
 	memset(result, '\0', result_size);
 	memcpy(&user_tm, input_tm, (size_t) sizeof user_tm);	/* Prevent clobbering */
@@ -96,16 +95,55 @@ strftime(result, result_size, format, input_tm)
 	while ((used < result_size) && (column <= format_size)) {
 		if ('%' == format[column++]) {
 
+			/* 
+				Look for an optional prefix numeric format character for
+				two digit numeric fields. (GNU extension)
+
+				Note that if any of the prefixes are used on an unsupported
+				action character (composite, string, domain n<10 or n>99), 
+				the prefix and its format are silently ignored. 
+			*/
+
+			switch(format[column]) {
+				case '-':
+					/* No padding */	
+					number_fmt = "%d";
+					column++;		/* Step to action char */
+					break;
+
+				case '_':
+					/* Space padding if needed */
+					number_fmt = "%2d";
+					column++;		/* Step to action char */
+					break;
+
+				case '0':
+					/* Zero padding if needed */
+					number_fmt = "%02d";
+					column++;		/* Step to action char */
+					break;
+
+				default:
+					/* 
+						No padding character. Treat as zero pad but don't
+						advance the column -- the current column is already
+						the action character. 	
+					*/
+					number_fmt = "%02d";
+					break;
+			}
+
+  			/* Pick a conversion character and act on it. */ 
+
 			switch(format[column++]) {
 
 						/* PRE-FORMATTED DATE AND TIME STRINGS */
 
 				/*
-						Note: all result strings built from the
-						compound date & time strings are short
-						enough compared to our buffer we don't need
-						check the nested strftime() calls for
-						overflow.
+					Note: All result strings built from the compound date &
+							time strings are short enough compared to the
+							internal buffer that there is no need to check
+							nested strftime() calls for overflow.
 				 */
 
 				case 'c':
@@ -146,7 +184,7 @@ strftime(result, result_size, format, input_tm)
 					break;
 
 				case 'X':
-					/* 'X' is locale dependent time, we assume USA: hh:mm:ss */
+					/* 'X' is locale dependent time, assumes USA: hh:mm:ss */
 				case 'T':
 					/* 'T' is time in ISO 8601 format hh:mm:ss */
 					strftime(buffer,
@@ -200,12 +238,12 @@ strftime(result, result_size, format, input_tm)
 
 				case 'd':
 					/* Day of the month w/leading zero */
-					sprintf(buffer, "%02d", user_tm.tm_mday);
+					sprintf(buffer, number_fmt, user_tm.tm_mday);
 					break;
 
 				case 'e':
 					/* Day of the month NO leading zero */
-					sprintf(buffer, "%2d", user_tm.tm_mday);
+					sprintf(buffer, "%d", user_tm.tm_mday);
 					break;
 
 				case 'B':
@@ -220,7 +258,7 @@ strftime(result, result_size, format, input_tm)
 
 				case 'm':
 					/* Numeric month */
-					sprintf(buffer, "%02d", user_tm.tm_mon + 1);
+					sprintf(buffer, number_fmt, user_tm.tm_mon + 1);
 					break;
 
 				case 'Y':
@@ -230,17 +268,17 @@ strftime(result, result_size, format, input_tm)
 
 				case 'y':
 					/* Two digit year */
-					sprintf(buffer, "%02d", (user_tm.tm_year + 1900) % 100);
+					sprintf(buffer, number_fmt, (user_tm.tm_year + 1900) % 100);
 					break;
 
 				case 'H':
 					/* Hour on 24-hour clock */
-					sprintf(buffer, "%02d", user_tm.tm_hour);
+					sprintf(buffer, number_fmt, user_tm.tm_hour);
 					break;
 
 				case 'k':
 					/* Hour on 24-hour clock. no leading zero */
-					sprintf(buffer, "%02d", user_tm.tm_hour);
+					sprintf(buffer, number_fmt, user_tm.tm_hour);
 					break;
 
 				case 'I':
@@ -248,7 +286,7 @@ strftime(result, result_size, format, input_tm)
 					if (user_tm.tm_hour % 12 == 0) {
 						strcpy(buffer, "12");
 					} else {
-						sprintf(buffer, "%02d", user_tm.tm_hour % 12);
+						sprintf(buffer, number_fmt, user_tm.tm_hour % 12);
 					}
 					break;
 
@@ -264,12 +302,12 @@ strftime(result, result_size, format, input_tm)
 
 				case 'M':
 					/* Minute */
-					sprintf(buffer, "%02d", user_tm.tm_min);
+					sprintf(buffer, number_fmt, user_tm.tm_min);
 					break;
 
 				case 'S':
 					/* Second */
-					sprintf(buffer, "%02d", user_tm.tm_sec);
+					sprintf(buffer, number_fmt, user_tm.tm_sec);
 					break;
 
 				case 'f':
@@ -337,52 +375,16 @@ strftime(result, result_size, format, input_tm)
 					strcpy(buffer, "\n");
 					break; 
 
-			/* All dash-prefixed individual placeholders omit leading zero */
-
-				case '-':
-					switch(format[column++]) {
-						case 'm':
-							/* Numeric month */
-							sprintf(buffer, "%2d", user_tm.tm_mon + 1);
-							break;
-
-						case 'y':
-							/* Two digit year */
-							sprintf(buffer, "%2d", (user_tm.tm_year + 1900) % 100);
-							break;
-
-						case 'I':
-							/* 12 hour clock hour of day */
-							if (user_tm.tm_hour % 12 == 0) {
-								strcpy(buffer, "12");
-							} else {
-								sprintf(buffer, "%2d", user_tm.tm_hour % 12);
-							}
-							break;
-
-						case 'M':
-							/* Minute */
-							sprintf(buffer, "%2d", user_tm.tm_min);
-							break;
-
-						case 'S':
-							/* Second */
-							sprintf(buffer, "%2d", user_tm.tm_sec);
-							break;
-
-						default:
-							fprintf(stderr,
-										  "Invalid prefixed format '%c' at column %d of: \"%s\"\n",
-										  format[column],
-										  column - 1,
-										  format);
-							abort();
-							break;
-
-					} /* (inner) switch */
+				case '\0':
+					/* Premature end of the template. Fatal! */
+					fprintf(stderr,
+							  "Incomplete format at end of template: \"%s\"\n",
+							  format);
+					abort();
 					break;
 
 				default:
+					/* Bad template. Fatal! */
 					fprintf(stderr,
 									"Unimplemented format '%c' at column %d of: \"%s\"\n",
 									format[column - 1],
@@ -410,7 +412,7 @@ strftime(result, result_size, format, input_tm)
 #endif
 		}
 
-		/* Add whatever we copied/generated from our buffer to user result */
+		/* Add data copied/generated from our buffer to user result */
 
 		if ((used + strlen(buffer) + 1) < result_size) {
 			strcat((char *) result, (char *) buffer);
@@ -427,7 +429,6 @@ strftime(result, result_size, format, input_tm)
 				 column - 1,
 				 format);
 			memset(result, '\0', result_size);
-			errno = ENOMEM;
 			return 0;
 		}
 
