@@ -5,13 +5,15 @@
 set -e
 
 ./date $1	"+%%	%%%%	Percent sign"
-./date $1	"+%t	%%t     Tab character (GNU extension)"
-./date $1	"+%n	%%n     Newline chacter (GNU extension)"
+./date $1	"+%t	%%t   Tab character (GNU extension)"
+./date $1	"+%n	%%n   Newline chacter (GNU extension)"
 
 echo ''
 
-./date $1	"+%c	%%c	Thu Jan 28 12:32:01 2014   locale's (hardcoded to US) date and time"
-./date $1	"+%+	%%+	Thu Jan 28 12:32:01 2014   POSIX (hardcoded to US) date and time"
+./date $1	"+%c	%%c	Thu Jan 28 12:32:01 2014 locale's (hardcoded to US) date and time"
+./date $1	"+%^c	%%^c	Thu Jan 28 12:32:01 2014 locale's (hardcoded to US) date and time, upper caser"
+./date $1	"+%#c	%%#c	Thu Jan 28 12:32:01 2014 locale's (hardcoded to US) date and time, swapped case"
+./date $1	"+%+	%%+	Thu Jan 28 12:32:01 2014 POSIX (hardcoded to US) date and time"
 ./date $1	"+%D	%%D	23/05/12 formats the date as YY/MM/DD"
 ./date $1	"+%F	%%F	2025-12-01 locale (hardcoded to US) in ISO 8601 format YYYY-MM-DD"
 ./date $1	"+%x	%%x	02/10/11 locale's (hardcoded to US) appropriate date representation"
@@ -26,6 +28,9 @@ echo ''
 echo ''
 
 ./date $1	"+%A	%%A	Monday   full weekday name"
+./date $1	"+%^A	%%^A	Monday   full weekday name (upper case)"
+./date $1	"+%#A	%%#A	Monday   full weekday name (swapped case)"
+
 ./date $1	"+%a	%%a	Mon   abbreviated weekday name"
 ./date $1	"+%w	%%w	0-6   day of the week with Sunday as 0"
 
@@ -61,7 +66,12 @@ echo ''
 ./date $1	"+%_I	%%_I	1-11  hour of the day, 12-hour time (with a leading space)"
 
 ./date $1	"+%P	%%P	am, pm   am or pm designation"
+./date $1	"+%^P	%%^P	am, pm   am or pm designation (upper case)"
+./date $1	"+%#P	%%#P	am, pm   am or pm designation (swapped case)"
+
 ./date $1	"+%p	%%p	AM, PM   AM or PM designation"
+./date $1	"+%^p	%%^p	AM, PM   AM or PM designation (upper case)"
+./date $1	"+%#p	%%#p	AM, PM   AM or PM designation (swapped case)"
 
 ./date $1	"+%M	%%M	00-59 minute of the hour (with a leading zero)"
 ./date $1	"+%0M	%%0M	00-59 minute of the hour (with a leading zero)"
@@ -76,6 +86,9 @@ echo ''
 ./date $1	"+%f	%%f	000000-999999  microsecond of the second (with leading zeroes)"
 
 ./date $1	"+%Z	%%Z	UTC   timezone name or abbreviation"
+./date $1	"+%^Z	%%^Z	UTC   timezone name or abbreviation"
+./date $1	"+%#Z	%%#Z	UTC   timezone name or abbreviation"
+
 ./date $1	"+%z	%%z	+0000 UTC offset in the form +HHMM or -HHMM"
 ./date $1	"+%s	%%s	amount of seconds since 1970-01-01 00:00:00 UTC"
 ./date $1	"+%j	%%j	001-366  day of the year (with leading zeroes)"
