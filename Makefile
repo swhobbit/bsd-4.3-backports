@@ -7,9 +7,11 @@ SUBDIRS=library	\
 	less	\
 	rdate	\
 	resize	\
+	sudo.v1.3	\
 	tcsh	\
 	top	\
 	vim-3.7	\
+	wrapsudo	\
 	xtitle
 
 ROOT_FILES= LICENSE Makefile README.md 
@@ -53,7 +55,7 @@ backup_tar: clean ${Z_FULL_TAR} FRC
 ${Z_FULL_TAR}:	${FULL_TAR}
 	compress -f ${FULL_TAR}
 
-${FULL_TAR}:	${SUBDIRS} ${ROOT_FILES} 
+fat_tar ${FULL_TAR}:	${SUBDIRS} ${ROOT_FILES} 
 	tar cf ${FULL_TAR}  $? 
 
 baby_tars: clean ${SUBDIRS} tar/43bsd_root.tar.Z
