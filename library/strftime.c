@@ -78,6 +78,31 @@ strftime(result, result_size, format, input_tm)
 	memset(result, '\0', result_size);
 	memcpy(&user_tm, input_tm, (size_t) sizeof user_tm);	/* Prevent clobbering */
 
+	/* Sanity check that the brokn down date is valid */
+	if (user_tm.tm_sec > 60 ||
+		 user_tm.tm_min > 59	||
+		 user_tm.tm_hour > 23 ||
+		 user_tm.tm_mday > 31 ||
+		 user_tm.tm_mon > 11	||
+		 user_tm.tm_wday > 6 ||
+		 user_tm.tm_yday > 365) {
+	 	fprintf(stderr, "One or more caller date fields too high to be valid!\n");
+		abort();
+	 }
+
+
+	if (user_tm.tm_sec < 0 ||
+		 user_tm.tm_min < 0 	||
+		 user_tm.tm_hour < 0 ||
+		 user_tm.tm_mday < 1 ||
+		 user_tm.tm_mon < 0	||
+		 user_tm.tm_wday < 0 ||
+		 user_tm.tm_yday < 0) {
+	 	fprintf(stderr, "One or more caller date fields too low to be valid!\n");
+		abort();
+	 }
+
+
 	if (gettimeofday(&tv, &tz) != 0) {
 		/* Does anyone know what time it is? */
 		perror("gettimeofday");
@@ -259,17 +284,17 @@ strftime(result, result_size, format, input_tm)
 
 				case 'd':
 					/* Day of the month w/leading zero */
-					sprintf(buffer, number_fmt, user_tm.tm_mday);
+					sprintf(buffer, number_fmt, user_tm.tm_mday + 1);
 					break;
 
 				case 'e':
 					/* Day of the month NO leading zero */
-					sprintf(buffer, "%d", user_tm.tm_mday);
+					sprintf(buffer, "%d", user_tm.tm_mday + 1);
 					break;
 
 				case 'B':
 					/* Full name of month */
-					strcpy(buffer, month[user_tm.tm_mon]);
+					strcpy(buffer, month[user_tm.tm_mon + 1]);
 					break;
 
 				case 'b':
