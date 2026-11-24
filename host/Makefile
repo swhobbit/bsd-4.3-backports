@@ -7,7 +7,7 @@ bin_PROGRAMS = host
 host_SOURCES = host.c 
 MAN = host.1
 
-CFLAGS= -g ${INCPATH} -Llibrary
+CFLAGS= -g ${INCLUDES} -Llibrary
 DESTDIR=/usr/local
 
 .c.o: ; cc  -c ${CFLAGS} -o $@ $*.c

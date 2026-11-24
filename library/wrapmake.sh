@@ -12,11 +12,10 @@
 # *            Address: Kendra Electronic Wonderworks                  *
 # *                     Kenmore, WA                                    *
 # *------------------------------------------------------------------- *
-echo "Using stand-in dummy scripts for $0"
+echo "Using stand-in for $0"
 
 # Drop options 
 if [ $# -gt 0 ] ; then
 	shift
 fi
-echo exec /bin/make "$@"
 exec /bin/make "$@"

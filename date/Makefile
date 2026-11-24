@@ -16,6 +16,9 @@ test: date  test-date.sh
 	./test-date.sh
 	./test-date.sh -u
 
+../library/libkew.a: ../library/strftime.c
+	( cd ../library ; make )
+
 # Unlike most of the programs in this repository, we installed into the
 # original location because one of its functions is set the system date 
 # and the original binary could not set it in the 2000s.

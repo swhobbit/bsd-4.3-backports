@@ -40,4 +40,4 @@ install: all
 	install -c -o root -g staff -m 444 xtitle.l ${DESTDIR}/man/man1
 
 clean:
-	rm -f core *.o xtitle ${MAN}
+	rm -f core *.o xtitle *.bak *~ ${MAN}

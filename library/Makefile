@@ -9,7 +9,7 @@ HEADER_FILES=herror.h	kewstr.h	stdlib.h	unistd.h strdup.c
 
 .c.o: ; cc -c ${CFLAGS} -o $@ $*.c
 
-all: libkew.a wrapmake
+all: libkew.a wrapmake wrapsudo
 	
 test:	wrapmake wrapmake.txt
 	ls -l wrapmake.*
@@ -22,14 +22,18 @@ innertest:
 # Rebuild of live wrapmake will be forced at next build because
 # first line removes its prerequisite object file
 clean:
-	rm -f *.o *.a *.bak wrapmake core
+	rm -f *.o *.a *.bak wrapmake wrapnode core
 	ln -s wrapmake.sh wrapmake
 
-install:	${DESTDIR}/include ${DESTDIR}/lib
+install:	${DESTDIR}/include ${DESTDIR}/lib wrapmake wrapsudo 
 
 libkew.a:	herror.o strcasecmp.o strerror.o strstr.o strdup.o strftime.o
 	ar cr $@ $?
 	ranlib $@
+
+wrapsudo: wrapsudo.o libkew.a Makefile
+	rm -f wrapsudo
+	cc ${CFLAGS} -o $@ wrapsudo.o ${LIBRARY} -L/usr/lib
 
 wrapmake: wrapmake.o libkew.a Makefile
 	rm -f wrapmake
