@@ -1,0 +1,13 @@
+#
+# Linux os-dependent defines
+#
+        CC = gcc
+    OSDEFS = -DSTD_HEADERS
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = flex
+      YACC = bison -y
+      LIBS = -lfl
+   INSTALL = ./bsdinstall
+   LDFLAGS = -static
+     CTAGS = ctags

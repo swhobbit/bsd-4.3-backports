@@ -1,0 +1,13 @@
+#
+# Solaris 2.x (Sunos 5.x) w/ gcc os-dependent defines
+#
+        CC = gcc
+    OSDEFS = -DSTD_HEADERS -DSOLARIS -I/usr/ucbinclude
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = lex
+      YACC = yacc
+      LIBS = -lucb -lsocket -lnsl -lelf -ly
+   INSTALL = /usr/ucb/install
+   LDFLAGS = -L/usr/ucblib
+     CTAGS = ctags

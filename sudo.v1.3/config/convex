@@ -1,0 +1,13 @@
+#
+# Convex OS 9.1 os-dependent defines
+#
+        CC = gcc -traditional
+    OSDEFS = -DNEED_STRDUP -D_CONVEX_SOURCE
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = lex
+      YACC = yacc
+      LIBS =
+   INSTALL = /usr/bin/install
+   LDFLAGS =
+     CTAGS = ctags

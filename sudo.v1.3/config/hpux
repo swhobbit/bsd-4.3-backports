@@ -1,0 +1,13 @@
+#
+# HP-UX os-dependent defines
+#
+        CC = cc
+    OSDEFS = -DBROKEN_GETPASS -DSTD_HEADERS -DUSE_CWD
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = lex
+      YACC = yacc
+      LIBS = -lBSD
+   INSTALL = ./bsdinstall
+   LDFLAGS = -Wl,-a,archive
+     CTAGS = ctags

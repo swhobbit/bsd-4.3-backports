@@ -1,0 +1,13 @@
+#
+# Linux w/ shadow passwd os-dependent defines
+#
+        CC = gcc
+    OSDEFS = -DSTD_HEADERS -DSHADOW_PWD
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = flex
+      YACC = bison -y
+      LIBS = -lfl -lshadow
+   INSTALL = ./bsdinstall
+   LDFLAGS = -static
+     CTAGS = ctags

@@ -1,0 +1,13 @@
+#
+# AIX 3.x os-dependent defines
+#
+        CC = cc
+    OSDEFS = -DBROKEN_GETPASS -DSTD_HEADERS
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = lex
+      YACC = yacc
+      LIBS =
+   INSTALL = /usr/ucb/install
+   LDFLAGS = -bnoso -bI:/lib/syscalls.exp
+     CTAGS = ctags

@@ -1,0 +1,13 @@
+#
+# GENERIC os-dependent defines
+#
+        CC = cc
+    OSDEFS =
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = lex
+      YACC = yacc
+      LIBS = -ll
+   INSTALL = ./bsdinstall
+   LDFLAGS =
+     CTAGS = ctags

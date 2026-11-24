@@ -1,0 +1,13 @@
+#
+# KSR OS os-dependent defines
+#
+        CC = cc
+    OSDEFS = -DSTD_HEADERS
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = lex
+      YACC = yacc
+      LIBS = -lbsd
+   INSTALL = /usr/sbin/install
+   LDFLAGS =
+     CTAGS = ctags

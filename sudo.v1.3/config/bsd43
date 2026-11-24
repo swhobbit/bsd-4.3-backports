@@ -1,0 +1,13 @@
+#
+# BSD 4.3 os-dependent defines
+#
+        CC = cc
+    OSDEFS = -DNEED_STRDUP
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = lex
+      YACC = yacc
+      LIBS = -ll
+   INSTALL = /usr/bin/install
+   LDFLAGS =
+     CTAGS = ctags

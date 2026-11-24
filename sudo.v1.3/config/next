@@ -1,0 +1,13 @@
+#
+# NeXT os-dependent defines
+#
+        CC = cc
+    OSDEFS = -DNEED_STRDUP -DSTD_HEADERS
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = lex
+      YACC = yacc
+      LIBS =
+   INSTALL = /usr/bin/install
+   LDFLAGS =
+     CTAGS = ctags

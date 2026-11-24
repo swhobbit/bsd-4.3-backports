@@ -1,0 +1,13 @@
+#
+# Irix 4.x os-dependent defines
+#
+        CC = cc -cckr
+    OSDEFS = -DBROKEN_GETPASS -DSTD_HEADERS -D_BSD_COMPAT
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = lex
+      YACC = yacc
+      LIBS = -lbsd
+   INSTALL = ./bsdinstall
+   LDFLAGS =
+     CTAGS = ctags

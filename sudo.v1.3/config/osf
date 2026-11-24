@@ -1,0 +1,13 @@
+#
+# DEC OSF/1 os-dependent defines
+#
+        CC = cc
+    OSDEFS = -DSTD_HEADERS
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = lex
+      YACC = yacc
+      LIBS = -lbsd
+   INSTALL = /usr/bin/installbsd
+   LDFLAGS = -non_shared
+     CTAGS = ctags

@@ -1,0 +1,4 @@
+These files contain the os-dependent portions of the Makefile.  They are
+concatenated on top of Makefile.ind to form Makefile.real (which the top
+level Makefile then calls).  To create a config file for a new os, copy
+the generic file and modify as appropriate.  See the INSTALL file for more info.

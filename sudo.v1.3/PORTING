@@ -1,0 +1,15 @@
+sudo porting hints:
+
+Sudo should be fairly easy to port.  The most problematic part is how
+set*uid() functions.  If you have no seteuid() but do have setreuid()
+you can emulate seteuid() with a macro like the following:
+    #define seteuid(__EUID)	(setreuid((uid_t)-1, __EUID))
+
+Another possible pitfall is getdtablesize() which is used to get the maximum
+number of open files the process can have.  For systems that have the
+Posix(?) sysconf() but no getdtablesize(), use the following macro:
+    #define getdtablesize()	(sysconf(_SC_OPEN_MAX))
+If all else fails you can use the value of NOFILE in <sys/param.h>.
+
+If you port sudo to a new architecture, please send your changes to
+    sudo-bugs@cs.colorado.edu

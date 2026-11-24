@@ -1,0 +1,13 @@
+#
+# BSD/386 os-dependent defines
+#
+        CC = cc
+    OSDEFS = -DSTD_HEADERS -DMAILER=\"/usr/sbin/sendmail\"
+  OPTIMIZE = -O
+   CCFLAGS = $(OPTIMIZE)
+       LEX = lex
+      YACC = yacc
+      LIBS = -ll
+   INSTALL = /usr/bin/install
+   LDFLAGS =
+     CTAGS = ctags

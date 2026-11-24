@@ -1,0 +1,14 @@
+TODO list
+
+01) Find out why bison -y warns on parse.yacc and fix the problem if it is
+	indeed a problem.
+
+02) Add groups of users to the config file.
+
+03) Deal with host aliases rationally.
+
+04) Nestable command aliases
+
+05) POSIX signals (plus emulation where they are lacking)
+
+06) Time out the passwd: prompt
