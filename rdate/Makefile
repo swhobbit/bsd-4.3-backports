@@ -1,34 +1,32 @@
+LIBRARY=-L../library -lkew
+INCLUDES=-I.  -I../library
+bin_PROGRAMS = rdate
 
-bin_PROGRAMS = udpc rdatet
 
+rdate_SOURCES = rdate.c rdate.h tcpd.c udpc.c 
 
-rdate_SOURCES = rdate.c rdate.h
-
-CFLAGS= -O -I.:library 
+CFLAGS= -g $(INCLUDES)
 DESTDIR=
 
 .c.o: ; cc -c ${CFLAGS} -o $@ $*.c
 
-all: udpc rdatet ${MAN}
+all: rdate ${MAN}
 
-e: everything
+rdate: rdate.o tcpc.o udpc.o
+	: cc ${CFLAGS} -o rdate rdate.o tcpc.o udpc.o ${LIBRARY}
+	cc ${CFLAGS} -o rdate rdate.o tcpc.o ${LIBRARY}
 
 everything: clean all
 
 udpc.c: udpc.o 
 
-rdatet: rdatet.o 
-	cc ${CFLAGS} -o rdatet rdatet.o
-
-udpc: udpc.o 
-	cc ${CFLAGS} -o udpc udpc.o
+tcpc: tcpc.o 
 
 rdate.o: rdate.c 
-	cc ${CFLAGS} -c rdate.c
 
 install: all 
-	install -c -s rdatet ${DESTDIR}/bin
+	install -c -s rdate ${DESTDIR}/bin
 
 
 clean:
-	rm -f *.o rdate rdatet udpc *.1 *.l
+	rm -f core *.bak *~ ._* *.o rdate *.1 *.l
